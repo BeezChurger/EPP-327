@@ -1,1 +1,1741 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wealth Redistribution Simulator: The Great Tax Debate</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: #333;
+        }
 
+        .game-container {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: linear-gradient(45deg, #4CAF50, #2196F3);
+            border-radius: 10px;
+            color: white;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #007bff;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .stat-value {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #007bff;
+        }
+
+        .policy-section {
+            background: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            border: 2px solid #e9ecef;
+        }
+
+        .slider-container {
+            margin: 15px 0;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 5px;
+        }
+
+        .slider-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        input[type="range"] {
+            width: 100%;
+            height: 8px;
+            border-radius: 5px;
+            background: #ddd;
+            outline: none;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #007bff;
+            cursor: pointer;
+        }
+
+        .approval-bars {
+            margin: 20px 0;
+        }
+
+        .approval-group {
+            margin: 10px 0;
+        }
+
+        .approval-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 3px;
+        }
+
+        .approval-bar {
+            height: 20px;
+            background: #e9ecef;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .approval-fill {
+            height: 100%;
+            transition: width 0.5s ease;
+            border-radius: 10px;
+        }
+
+        .elite { background: #dc3545; }
+        .business { background: #fd7e14; }
+        .middle { background: #ffc107; }
+        .working { background: #28a745; }
+        .public { background: #17a2b8; }
+
+        .event-log {
+            background: #343a40;
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            height: 200px;
+            overflow-y: auto;
+            margin: 20px 0;
+        }
+
+        .event {
+            padding: 5px;
+            margin: 5px 0;
+            border-left: 3px solid #ffc107;
+            padding-left: 10px;
+        }
+
+        .controls {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+
+        button {
+            padding: 12px 25px;
+            font-size: 16px;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            font-weight: bold;
+        }
+
+        .next-turn {
+            background: #28a745;
+            color: white;
+        }
+
+        .reset {
+            background: #dc3545;
+            color: white;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .progress-section {
+            margin: 20px 0;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 25px;
+            background: #e9ecef;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(45deg, #007bff, #28a745);
+            transition: width 0.5s ease;
+        }
+
+        .chart-container {
+            margin: 20px 0;
+            padding: 20px;
+            background: white;
+            border-radius: 10px;
+            border: 1px solid #ddd;
+        }
+
+        canvas {
+            max-width: 100%;
+            height: 300px;
+        }
+
+        .risk-indicator {
+            display: flex;
+            justify-content: space-between;
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+
+        .low-risk { background: #d4edda; color: #155724; }
+        .medium-risk { background: #fff3cd; color: #856404; }
+        .high-risk { background: #f8d7da; color: #721c24; }
+
+        .demographics-section {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 15px 0;
+        }
+
+        .allocation-breakdown {
+            background: #fff;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 15px 0;
+            border: 1px solid #ddd;
+        }
+
+        .allocation-item {
+            display: flex;
+            justify-content: space-between;
+            margin: 5px 0;
+            padding: 5px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .allocation-item:last-child {
+            border-bottom: none;
+        }
+
+        .game-info {
+            background: #e3f2fd;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            border-left: 4px solid #2196F3;
+        }
+
+        .two-column {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .two-column {
+                grid-template-columns: 1fr;
+            }
+        }
+    
+
+        .legend {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin: 10px 0 0;
+            font-size: 0.95em;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            padding: 6px 10px;
+            border-radius: 999px;
+        }
+
+        .swatch {
+            width: 14px;
+            height: 14px;
+            border-radius: 3px;
+            display: inline-block;
+        }
+
+        .charts-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            align-items: start;
+        }
+
+        .chart-panel {
+            background: #fff;
+            padding: 12px;
+            border-radius: 10px;
+            border: 1px solid #ddd;
+        }
+
+        .chart-title {
+            margin: 0 0 8px;
+        }
+
+        .glossary {
+            margin: 20px 0;
+            background: #fff;
+            border-radius: 10px;
+            border: 2px solid #e9ecef;
+            padding: 15px;
+        }
+
+        .glossary details {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 10px;
+            padding: 12px;
+        }
+
+        .glossary summary {
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .glossary dl {
+            margin: 12px 0 0;
+        }
+
+        .glossary dt {
+            font-weight: bold;
+            margin-top: 10px;
+        }
+
+        .glossary dd {
+            margin-left: 0;
+            margin-top: 4px;
+            color: #444;
+        }
+
+        @media (max-width: 768px) {
+            .charts-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+    
+
+        .hint-toggle {
+            background: #6f42c1;
+            color: white;
+        }
+
+        .hint-panel {
+            margin: 10px 0 25px;
+            padding: 14px;
+            border-radius: 12px;
+            background: #f8f9fa;
+            border: 2px dashed #6f42c1;
+            color: #333;
+        }
+
+        .hint-panel h4 {
+            margin: 0 0 8px;
+        }
+
+        .hint-panel ul {
+            margin: 8px 0 0 18px;
+        }
+
+        .hint-panel li {
+            margin: 6px 0;
+        }
+
+</style>
+</head>
+<body>
+    <div class="game-container">
+        <div class="header">
+            <h1>🏛️ Wealth Redistribution Simulator</h1>
+            <p>Navigate the politics of taxation and social spending in Democria</p>
+            <p><strong>Current Date:</strong> <span id="currentDate">January 2025</span> | <strong>Turn:</strong> <span id="turn">1</span></p>
+        </div>
+
+        <div class="game-info">
+            <h3>🎯 Your Mission</h3>
+            <p>As President of Democria, you must balance competing interests while reducing inequality and keeping the economy stable.</p>
+            <p><strong>How to play:</strong> Each turn represents 6 months. Adjust taxes and how you spend the money, then click <em>Next Turn</em>. Watch how the country changes over time.</p>
+            <p><strong>Tip:</strong> There’s no "win" or "lose" now—treat it like a sandbox. Try different strategies and learn what happens!</p>
+
+        <div class="controls">
+            <button class="next-turn" onclick="simulateTurn()">▶️ Next Turn (6 months)</button>
+            <button class="reset" onclick="resetGame()">🔄 Reset Game</button>
+            <button class="hint-toggle" id="hintToggle" onclick="toggleHints()">💡 Hints: OFF</button>
+        </div>
+        <div id="hintPanel" class="hint-panel" style="display:none"></div>
+
+
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div>Population</div>
+                <div class="stat-value" id="population">100M</div>
+            </div>
+            <div class="stat-card">
+                <div>Treasury Balance</div>
+                <div class="stat-value" id="treasury">$500B</div>
+            </div>
+            <div class="stat-card">
+                <div>Tax Revenue/Turn</div>
+                <div class="stat-value" id="taxRevenue">$80B</div>
+            </div>
+            <div class="stat-card">
+                <div>Net Revenue/Turn</div>
+                <div class="stat-value" id="netRevenue">$0B</div>
+            </div>
+            <div class="stat-card">
+                <div>GDP Growth</div>
+                <div class="stat-value" id="gdpGrowth">2.5%</div>
+            </div>
+            <div class="stat-card">
+                <div>Inequality (Gini)</div>
+                <div class="stat-value" id="gini">0.45</div>
+            </div>
+            <div class="stat-card">
+                <div>Unemployment</div>
+                <div class="stat-value" id="unemployment">6.0%</div>
+            </div>
+            <div class="stat-card">
+                <div>Government Debt</div>
+                <div class="stat-value" id="govDebt">$1000B</div>
+            </div>
+            <div class="stat-card">
+                <div>Overall Approval</div>
+                <div class="stat-value" id="approval">55%</div>
+            </div>
+        </div>
+
+        <div class="two-column">
+            <div>
+                <div class="policy-section">
+                    <h3>📊 Tax Policy</h3>
+                    <div class="slider-container">
+                        <div class="slider-label">
+                            <span>Capital Gains Tax (Bottom 60%)</span>
+                            <span id="taxRate1Value">15%</span>
+                        </div>
+                        <input type="range" id="taxRate1" min="5" max="35" value="15">
+                    </div>
+
+                    <div class="slider-container">
+                        <div class="slider-label">
+                            <span>Business Tax (Next 30%)</span>
+                            <span id="taxRate2Value">25%</span>
+                        </div>
+                        <input type="range" id="taxRate2" min="10" max="50" value="25">
+                    </div>
+
+                    <div class="slider-container">
+                        <div class="slider-label">
+                            <span>Wealth Tax (Top 10%)</span>
+                            <span id="taxRate3Value">2%</span>
+                        </div>
+                        <input type="range" id="taxRate3" min="0" max="15" value="2">
+                    </div>
+
+                    <div class="slider-container">
+                        <div class="slider-label">
+                            <span>Tax Enforcement</span>
+                            <span id="enforcementValue">50%</span>
+                        </div>
+                        <input type="range" id="enforcement" min="0" max="100" value="50">
+                    </div>
+                </div>
+
+                <div class="policy-section">
+                    <h3>💰 Revenue Allocation</h3>
+                    <p><strong>Total must be 100% or less</strong> (unallocated becomes surplus)</p>
+
+                    <div class="slider-container">
+                        <div class="slider-label">
+                            <span>Public Services</span>
+                            <span id="publicServicesValue">40%</span>
+                        </div>
+                        <input type="range" id="publicServices" min="0" max="100" value="40">
+                    </div>
+
+                    <div class="slider-container">
+                        <div class="slider-label">
+                            <span>Infrastructure</span>
+                            <span id="infrastructureValue">30%</span>
+                        </div>
+                        <input type="range" id="infrastructure" min="0" max="100" value="30">
+                    </div>
+
+                    <div class="slider-container">
+                        <div class="slider-label">
+                            <span>Debt Reduction</span>
+                            <span id="debtReductionValue">30%</span>
+                        </div>
+                        <input type="range" id="debtReduction" min="0" max="100" value="30">
+                    </div>
+
+                    <div class="allocation-breakdown">
+                        <div class="allocation-item">
+                            <span>Total Allocation:</span>
+                            <span id="totalAllocation">100%</span>
+                        </div>
+                        <div class="allocation-item">
+                            <span>Budget Balance:</span>
+                            <span id="budgetBalance">$0B</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div>
+                <div class="policy-section">
+                    <h3>📈 Political Support</h3>
+                    <div class="approval-bars">
+                        <div class="approval-group">
+                            <div class="approval-label">
+                                <span>Elite (Top 1%)</span>
+                                <span id="eliteApprovalText">45%</span>
+                            </div>
+                            <div class="approval-bar">
+                                <div class="approval-fill elite" id="eliteApproval"></div>
+                            </div>
+                        </div>
+
+                        <div class="approval-group">
+                            <div class="approval-label">
+                                <span>Business Class</span>
+                                <span id="businessApprovalText">50%</span>
+                            </div>
+                            <div class="approval-bar">
+                                <div class="approval-fill business" id="businessApproval"></div>
+                            </div>
+                        </div>
+
+                        <div class="approval-group">
+                            <div class="approval-label">
+                                <span>Middle Class</span>
+                                <span id="middleApprovalText">55%</span>
+                            </div>
+                            <div class="approval-bar">
+                                <div class="approval-fill middle" id="middleApproval"></div>
+                            </div>
+                        </div>
+
+                        <div class="approval-group">
+                            <div class="approval-label">
+                                <span>Working Class</span>
+                                <span id="workingApprovalText">65%</span>
+                            </div>
+                            <div class="approval-bar">
+                                <div class="approval-fill working" id="workingApproval"></div>
+                            </div>
+                        </div>
+
+                        <div class="approval-group">
+                            <div class="approval-label">
+                                <span>Public Sector</span>
+                                <span id="publicApprovalText">60%</span>
+                            </div>
+                            <div class="approval-bar">
+                                <div class="approval-fill public" id="publicApproval"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="risk-indicator" id="riskIndicator">
+                        <span>Political Risk:</span>
+                        <span id="riskLevel">Medium</span>
+                    </div>
+
+                    <div class="risk-indicator" id="overallApprovalIndicator">
+                        <span>Overall Approval:</span>
+                        <span id="overallApprovalInSupport">55%</span>
+                    </div>
+
+                    <div class="risk-indicator" id="flightRiskIndicator">
+                        <span>Flight Risk:</span>
+                        <span id="flightRiskLevel">Low</span>
+                    </div>
+
+                </div>
+
+                <div class="demographics-section">
+                    <h3>👥 Demographics</h3>
+                    <div class="allocation-item">
+                        <span>Youth (0-24):</span>
+                        <span id="popYouth">30M</span>
+                    </div>
+                    <div class="allocation-item">
+                        <span>Working Age:</span>
+                        <span id="popWorking">55M</span>
+                    </div>
+                    <div class="allocation-item">
+                        <span>Senior (65+):</span>
+                        <span id="popSenior">15M</span>
+                    </div>
+                    <div class="allocation-item">
+                        <span>Migration Rate:</span>
+                        <span id="migrationRate">+0.5%</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        
+        <div class="chart-container">
+            <h3>📊 Charts</h3>
+            <div class="charts-grid">
+                <div class="chart-panel">
+                    <h4 class="chart-title">Key Metrics Over Time</h4>
+                    <canvas id="metricsChart"></canvas>
+                    <div class="legend" aria-label="Key metrics legend">
+                        <div class="legend-item"><span class="swatch" style="background:#dc3545"></span> Inequality (Gini)</div>
+                        <div class="legend-item"><span class="swatch" style="background:#28a745"></span> Overall Approval</div>
+                        <div class="legend-item"><span class="swatch" style="background:#007bff"></span> GDP Growth</div>
+                    </div>
+                </div>
+
+                <div class="chart-panel">
+                    <h4 class="chart-title">Laffer Curve (Top Wealth Tax vs Revenue)</h4>
+                    <canvas id="lafferChart"></canvas>
+                    <div class="legend" aria-label="Laffer curve legend">
+                        <div class="legend-item"><span class="swatch" style="background:#6f42c1"></span> Revenue Curve</div>
+                        <div class="legend-item"><span class="swatch" style="background:#111"></span> Current Policy</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="event-log" id="eventLog">
+            <div class="event">Welcome to Democria! Your first policy decisions await...</div>
+        </div>
+
+        <div class="glossary">
+            <details>
+                <summary>📚 Glossary (tap to learn the tricky words)</summary>
+                <p style="margin-top:10px">Simple explanations for words used in this simulator (made for a 10-year-old).</p>
+                <dl>
+                    <dt>GDP (Gross Domestic Product)</dt>
+                    <dd>The total value of everything a country makes and sells. If GDP is growing, the economy is getting bigger.</dd>
+
+                    <dt>GDP Growth</dt>
+                    <dd>How fast GDP is increasing (or decreasing). Positive is good growth; negative means the economy is shrinking.</dd>
+
+                    <dt>Gini (Gini Coefficient)</dt>
+                    <dd>A score for inequality. Higher means money is more unevenly shared; lower means it’s more equal.</dd>
+
+                    <dt>Unemployment</dt>
+                    <dd>The percentage of people who want jobs but can’t find one.</dd>
+
+                    <dt>Treasury Balance</dt>
+                    <dd>How much money the government has saved right now (like a bank account).</dd>
+
+                    <dt>Tax Revenue</dt>
+                    <dd>Money the government collects from taxes.</dd>
+
+                    <dt>Net Revenue</dt>
+                    <dd>Money left over after spending costs are paid. Positive means surplus; negative means deficit.</dd>
+
+                    <dt>Capital Gains Tax</dt>
+                    <dd>A tax on profit made when you sell something for more than you bought it for (like shares).</dd>
+
+                    <dt>Business Tax</dt>
+                    <dd>A tax paid by companies on the money they earn.</dd>
+
+                    <dt>Wealth Tax</dt>
+                    <dd>A tax based on how much wealth (big savings/assets) very rich people have.</dd>
+
+                    <dt>Tax Enforcement</dt>
+                    <dd>How strongly the government checks and catches people who try to avoid paying tax.</dd>
+
+                    <dt>Tax Evasion</dt>
+                    <dd>When people illegally hide money to pay less tax.</dd>
+
+                    <dt>Capital Flight</dt>
+                    <dd>When rich people or companies move money to other countries to avoid taxes or risk.</dd>
+
+                    <dt>Public Services</dt>
+                    <dd>Things the government pays for that everyone uses (like schools, hospitals, police).</dd>
+
+                    <dt>Infrastructure</dt>
+                    <dd>Big public projects that help the country work (roads, rail, power, internet).</dd>
+
+                    <dt>Government Debt</dt>
+                    <dd>Money the government owes because it borrowed in the past.</dd>
+
+                    <dt>Debt Interest</dt>
+                    <dd>Extra money paid because of debt—like interest on a loan.</dd>
+
+                    <dt>Debt Reduction</dt>
+                    <dd>Using money to pay back debt (reducing what the government owes).</dd>
+
+                    <dt>Budget Surplus / Budget Deficit</dt>
+                    <dd>Surplus = the government took in more than it spent. Deficit = it spent more than it took in.</dd>
+
+                    <dt>Overall Approval</dt>
+                    <dd>A simple average of how happy different groups are with your government.</dd>
+
+                    <dt>Political Risk</dt>
+                    <dd>How likely it is that your plans will face big trouble because people are unhappy or the economy is unstable.</dd>
+
+                    <dt>Flight Risk</dt>
+                    <dd>How likely it is that money will "fly away" to other countries (capital flight) if people feel taxes/risk are too high.</dd>
+
+                    <dt>Migration Rate</dt>
+                    <dd>How many people are moving into the country versus leaving it.</dd>
+
+                    <dt>Laffer Curve</dt>
+                    <dd>An idea that if tax is too low you collect little money, but if tax is too high people avoid it—so there can be a “middle” tax rate that collects the most.</dd>
+                </dl>
+            </details>
+        </div>
+
+        </div>
+
+    <script>
+        // Fiscal constants (B = billions per turn)
+        const BASE_GOVERNMENT_COST = 40; // Fixed baseline operating cost each turn (B)
+        const DEBT_INTEREST_RATE = 0.02; // 2% interest per turn
+
+        // Game state
+        let gameState = {
+            turn: 1,
+            date: new Date(2025, 0, 1),
+            population: 100,
+            treasury: 500,
+            taxRevenue: 80,
+            netRevenue: 0,
+            gdpGrowth: 2.5,
+            gini: 0.45,
+            unemployment: 6.0,
+            governmentDebt: 1000,
+            approvals: {
+                elite: 45,
+                business: 50,
+                middle: 55,
+                working: 65,
+                public: 60
+            },
+            demographics: {
+                youth: 30,
+                working: 55,
+                senior: 15
+            },
+            migrationRate: 0.5,
+            taxEvasion: 15,
+            capitalFlight: 0,
+            lastSpending: null,
+            history: {
+                turns: [],
+                gini: [],
+                approval: [],
+                gdp: [],
+                debt: []
+            },
+            revenueByClass: {
+                elite: 0,
+                business: 0,
+                middle: 0,
+                working: 0
+            }
+        };
+
+        // Live preview cache (so indicators match sliders without advancing the turn)
+        let previewCache = {
+            taxRevenue: 80,
+            netRevenue: 0
+        };
+        // Chart setup
+        let metricsChart;
+        let lafferChart;
+
+        function initCanvasChart(canvasId) {
+            const canvas = document.getElementById(canvasId);
+            const ctx = canvas.getContext('2d');
+            return {
+                canvas,
+                ctx,
+                width: canvas.width = canvas.offsetWidth,
+                height: canvas.height = 300
+            };
+        }
+
+        function initializeCharts() {
+            metricsChart = initCanvasChart('metricsChart');
+            lafferChart = initCanvasChart('lafferChart');
+        }
+
+        function drawAxes(chartObj, leftPad=50, topPad=20, rightPad=20, bottomPad=40) {
+            const {ctx, width, height} = chartObj;
+            ctx.strokeStyle = '#333';
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.moveTo(leftPad, topPad);
+            ctx.lineTo(leftPad, height - bottomPad);
+            ctx.lineTo(width - rightPad, height - bottomPad);
+            ctx.stroke();
+            return {leftPad, topPad, rightPad, bottomPad};
+        }
+
+        function drawMetricsChart() {
+            const ctx = metricsChart.ctx;
+            const width = metricsChart.width;
+            const height = metricsChart.height;
+
+            ctx.clearRect(0, 0, width, height);
+            if (gameState.history.turns.length < 2) return;
+
+            const pads = drawAxes(metricsChart);
+
+            // Lines
+            drawMetricLine(metricsChart, gameState.history.gini, '#dc3545', 0.2, 0.6, pads);
+            drawMetricLine(metricsChart, gameState.history.approval, '#28a745', 0, 100, pads);
+            drawMetricLine(metricsChart, gameState.history.gdp, '#007bff', -5, 10, pads);
+
+            // Mini axis labels
+            ctx.fillStyle = '#333';
+            ctx.font = '12px Segoe UI, Tahoma, sans-serif';
+            ctx.fillText('Turn', width - 55, height - 15);
+        }
+
+        function drawMetricLine(chartObj, data, color, min, max, pads) {
+            const {ctx, width, height} = chartObj;
+            const {leftPad, topPad, rightPad, bottomPad} = pads;
+
+            ctx.strokeStyle = color;
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+
+            data.forEach((value, index) => {
+                const x = leftPad + (index * (width - leftPad - rightPad) / (data.length - 1));
+                const normalized = (value - min) / (max - min);
+                const y = (height - bottomPad) - (normalized * (height - topPad - bottomPad));
+
+                if (index === 0) ctx.moveTo(x, y);
+                else ctx.lineTo(x, y);
+            });
+
+            ctx.stroke();
+        }
+
+        function estimateTopTaxRevenue(topTaxRate) {
+            // Laffer curve: revenue = base * rate * behavioural_multiplier
+            // We use a smooth hump-shaped response: rate * exp(-k*rate)
+            // - k is lower with higher enforcement (peak shifts right + higher)
+            // - k is higher with high business tax (investment climate worsens)
+            // This is a *curve for the top wealth tax only* (other sliders held constant).
+
+            const eliteWealthBase = 3000; // billions-ish scale
+
+            // Pull current policy context
+            const enforcement = parseFloat(controls.enforcement.slider.value);
+            const businessTax = parseFloat(controls.taxRate2.slider.value);
+
+            const t = clamp(Math.max(0, topTaxRate) / 100.0, 0, 0.30); // 0..30%
+            const enforcementEffect = clamp(enforcement / 100.0, 0, 1);
+
+            // Compliance improves with enforcement, but never perfect.
+            const compliance = clamp(0.72 + 0.25 * enforcementEffect - 0.55 * (t ** 1.15), 0.10, 0.98);
+
+            // Behavioural/base shrink: higher rates shrink the taxable base via avoidance/relocation/deferral.
+            // Choose k so the peak is typically around ~7–12% depending on enforcement.
+            // For rate*exp(-k*rate), peak is at rate=1/k.
+            const baseK = 9.5;                     // baseline peak around ~10.5%
+            const k = clamp(
+                baseK
+                + 2.5 * (1 - enforcementEffect)    // low enforcement -> peak left
+                + 1.2 * Math.max(0, (businessTax - 30) / 20), // high business tax -> worse climate
+                6.5,
+                14.0
+            );
+
+            const behavioural = Math.exp(-k * t);
+
+            // Ensure the curve is exactly 0 at 0%.
+            const revenue = eliteWealthBase * t * compliance * behavioural;
+            return Math.max(0, revenue);
+        }
+
+        function drawLafferChart() {
+            const ctx = lafferChart.ctx;
+            const width = lafferChart.width;
+            const height = lafferChart.height;
+
+            ctx.clearRect(0, 0, width, height);
+
+            const pads = drawAxes(lafferChart);
+            const {leftPad, topPad, rightPad, bottomPad} = pads;
+
+            // Domain: 0% to 20% (covers the slider range + shows the peak idea)
+            const minRate = 0;
+            const maxRate = 25;
+            const steps = 80;
+
+            const rates = [];
+            const revenues = [];
+            for (let i = 0; i <= steps; i++) {
+                const r = minRate + (i * (maxRate - minRate) / steps);
+                rates.push(r);
+                revenues.push(estimateTopTaxRevenue(r));
+            }
+
+            const maxRev = Math.max(...revenues, 1);
+
+            // Curve
+            ctx.strokeStyle = '#6f42c1';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            revenues.forEach((rev, idx) => {
+                const x = leftPad + (idx * (width - leftPad - rightPad) / steps);
+                const y = (height - bottomPad) - ((rev / maxRev) * (height - topPad - bottomPad));
+                if (idx === 0) ctx.moveTo(x, y);
+                else ctx.lineTo(x, y);
+            });
+            ctx.stroke();
+
+            // Current policy point
+            const currentRate = parseFloat(controls.taxRate3.slider.value);
+            const currentRev = estimateTopTaxRevenue(currentRate);
+            const currentX = leftPad + ((currentRate - minRate) / (maxRate - minRate)) * (width - leftPad - rightPad);
+            const currentY = (height - bottomPad) - ((currentRev / maxRev) * (height - topPad - bottomPad));
+
+            ctx.fillStyle = '#111';
+            ctx.beginPath();
+            ctx.arc(currentX, currentY, 4, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Axis labels
+            ctx.fillStyle = '#333';
+            ctx.font = '12px Segoe UI, Tahoma, sans-serif';
+            ctx.fillText('Top Wealth Tax Rate (%)', width - 160, height - 15);
+            ctx.save();
+            ctx.translate(14, height/2);
+            ctx.rotate(-Math.PI/2);
+            ctx.fillText('Estimated Revenue (relative)', 0, 0);
+            ctx.restore();
+        }
+
+
+        function clamp(x, lo, hi) {
+            return Math.max(lo, Math.min(hi, x));
+        }
+
+        
+
+        function computeEffectivenessMultiplier(treasury) {
+            // Diminishing returns when treasury is very low (state can't implement policy)
+            // and when it's extremely high (waste/inefficiency).
+            let mult = 1.0;
+            if (treasury < 50) mult = 0.5;
+            else if (treasury < 100) mult = 0.7;
+            else if (treasury > 800) mult = 0.85;
+            return mult;
+        }
+function getPoliciesFromSliders() {
+            return {
+                taxRate1: parseFloat(controls.taxRate1.slider.value),
+                taxRate2: parseFloat(controls.taxRate2.slider.value),
+                taxRate3: parseFloat(controls.taxRate3.slider.value),
+                enforcement: parseFloat(controls.enforcement.slider.value),
+                publicServices: parseFloat(controls.publicServices.slider.value),
+                infrastructure: parseFloat(controls.infrastructure.slider.value),
+                debtReduction: parseFloat(controls.debtReduction.slider.value)
+            };
+        }
+
+        function computeEvasionAndFlight(p) {
+            const taxEvasion = clamp(30 - p.enforcement * 0.8 + (p.taxRate3 * 1.5), 5, 50);
+            const capitalFlight = Math.max(0, (p.taxRate3 - 5) * 0.5 + (p.taxRate2 - 35) * 0.3);
+            return { taxEvasion, capitalFlight };
+        }
+
+                function computeTaxRevenue(p, taxEvasion, capitalFlight) {
+                    const eliteWealth = 3000;
+                    const businessWealth = 1200;
+                    const middleWealth = 600;
+                    const workingWealth = 200;
+        
+                    let elite = eliteWealth * (p.taxRate3 / 100) * (1 - taxEvasion/100);
+                    let business = businessWealth * (p.taxRate2 / 100) * (1 - taxEvasion/100);
+                    let middle = middleWealth * (p.taxRate1 / 100) * (1 - taxEvasion/100);
+                    let working = workingWealth * (p.taxRate1 / 100) * (1 - taxEvasion/100);
+        
+                    let total = elite + business + middle + working;
+        
+                    // If capital flight pressure is high, the taxable base shrinks across the board.
+                    // Keep by-class values consistent with the total.
+                    if (capitalFlight > 3) {
+                        const factor = (1 - capitalFlight/100);
+                        total *= factor;
+                        elite *= factor;
+                        business *= factor;
+                        middle *= factor;
+                        working *= factor;
+                    }
+        
+                    return { total, byClass: { elite, business, middle, working } };
+                }
+
+        function computeApprovalTargets(state, p, effectivenessMultiplier = 1.0) {
+            const treasuryCrisisPenalty = state.treasury < 50 ? (50 - state.treasury) / 2 : 0;
+            const effectivePublicServices = p.publicServices * effectivenessMultiplier;
+            const effectiveInfrastructure = p.infrastructure * effectivenessMultiplier;
+
+            // Softer tax penalty model so players can hit *both* growth and approval with balanced policy.
+            // Approval responds strongly to unemployment and (moderately) to growth.
+            const eliteTarget = 78 - (p.taxRate1 * 1.2) - (p.taxRate2 * 0.8) - (p.taxRate3 * 1.1) - (state.capitalFlight * 2.2) - treasuryCrisisPenalty;
+            const businessTarget = 72 - (p.taxRate1 * 1.0) - (p.taxRate2 * 0.9) - (p.taxRate3 * 0.7) - (state.capitalFlight * 1.0) + (effectiveInfrastructure * 0.35) - treasuryCrisisPenalty;
+            const middleTarget = 64 - (p.taxRate1 * 0.6) + (effectivePublicServices * 0.45) + (effectiveInfrastructure * 0.25) + (state.gdpGrowth * 2.0) - (state.unemployment * 1.2);
+            const workingTarget = 60 - (p.taxRate1 * 0.3) + (effectivePublicServices * 0.55) + (state.gdpGrowth * 1.0) - (state.unemployment * 2.0);
+            const publicTarget = 66 + (effectivePublicServices * 0.35) + (effectiveInfrastructure * 0.22) - (p.taxRate1 * 0.4) - treasuryCrisisPenalty;
+
+            // Clamp 0..100
+            return {
+                elite: clamp(eliteTarget, 0, 100),
+                business: clamp(businessTarget, 0, 100),
+                middle: clamp(middleTarget, 0, 100),
+                working: clamp(workingTarget, 0, 100),
+                public: clamp(publicTarget, 0, 100)
+            };
+        }
+
+        function setRiskIndicators(overallApproval, gdpGrowth, debt, capitalFlight, taxEvasion) {
+            const riskIndicator = document.getElementById('riskIndicator');
+            const riskLevel = document.getElementById('riskLevel');
+
+            if (overallApproval < 35 || gdpGrowth < 0 || debt > 1500) {
+                riskIndicator.className = 'risk-indicator high-risk';
+                riskLevel.textContent = 'HIGH';
+            } else if (overallApproval < 50 || gdpGrowth < 1 || debt > 1200) {
+                riskIndicator.className = 'risk-indicator medium-risk';
+                riskLevel.textContent = 'MEDIUM';
+            } else {
+                riskIndicator.className = 'risk-indicator low-risk';
+                riskLevel.textContent = 'LOW';
+            }
+
+            // Flight risk
+            const flightRiskIndicator = document.getElementById('flightRiskIndicator');
+            const flightRiskLevel = document.getElementById('flightRiskLevel');
+            if (flightRiskIndicator && flightRiskLevel) {
+                const pressure = capitalFlight + (taxEvasion / 20);
+                if (pressure > 6) {
+                    flightRiskIndicator.className = 'risk-indicator high-risk';
+                    flightRiskLevel.textContent = `HIGH (${capitalFlight.toFixed(1)}% capital flight)`;
+                } else if (pressure > 3) {
+                    flightRiskIndicator.className = 'risk-indicator medium-risk';
+                    flightRiskLevel.textContent = `MEDIUM (${capitalFlight.toFixed(1)}% capital flight)`;
+                } else {
+                    flightRiskIndicator.className = 'risk-indicator low-risk';
+                    flightRiskLevel.textContent = `LOW (${capitalFlight.toFixed(1)}% capital flight)`;
+                }
+            }
+
+            // Overall approval indicator styling
+            const overallApprovalIndicator = document.getElementById('overallApprovalIndicator');
+            if (overallApprovalIndicator) {
+                if (overallApproval < 35) overallApprovalIndicator.className = 'risk-indicator high-risk';
+                else if (overallApproval < 50) overallApprovalIndicator.className = 'risk-indicator medium-risk';
+                else overallApprovalIndicator.className = 'risk-indicator low-risk';
+            }
+        }
+
+        
+        function updatePolicyPreview() {
+            const p = getPoliciesFromSliders();
+            const { taxEvasion, capitalFlight } = computeEvasionAndFlight(p);
+            const rev = computeTaxRevenue(p, taxEvasion, capitalFlight);
+
+            if (typeof previewCache !== 'undefined') {
+                previewCache.taxRevenue = rev.total;
+            }
+
+            const totalAlloc = p.publicServices + p.infrastructure + p.debtReduction;
+
+            // Always show revenue (depends only on tax + enforcement)
+            document.getElementById('taxRevenue').textContent = `${rev.total.toFixed(1)}B`;
+
+            const isValidAllocation = (totalAlloc <= 100.1);
+            if (!isValidAllocation) {
+                document.getElementById('netRevenue').textContent = '—';
+                document.getElementById('gdpGrowth').textContent = `${gameState.gdpGrowth.toFixed(1)}%`;
+                document.getElementById('gini').textContent = gameState.gini.toFixed(2);
+                document.getElementById('unemployment').textContent = `${gameState.unemployment.toFixed(1)}%`;
+
+                const overallApprovalNow = (gameState.approvals.elite + gameState.approvals.business +
+                                            gameState.approvals.middle + gameState.approvals.working +
+                                            gameState.approvals.public) / 5;
+                document.getElementById('approval').textContent = `${overallApprovalNow.toFixed(0)}%`;
+
+                const overallApprovalSupport = document.getElementById('overallApprovalInSupport');
+                if (overallApprovalSupport) overallApprovalSupport.textContent = `${overallApprovalNow.toFixed(0)}%`;
+
+                updateApprovalBar('eliteApproval', gameState.approvals.elite);
+                updateApprovalBar('businessApproval', gameState.approvals.business);
+                updateApprovalBar('middleApproval', gameState.approvals.middle);
+                updateApprovalBar('workingApproval', gameState.approvals.working);
+                updateApprovalBar('publicApproval', gameState.approvals.public);
+
+                setRiskIndicators(overallApprovalNow, gameState.gdpGrowth, gameState.governmentDebt, capitalFlight, taxEvasion);
+
+                if (hintsEnabled) {
+                    const panel = document.getElementById('hintPanel');
+                    panel.innerHTML = `
+                        <h4>💡 Live Policy Hints</h4>
+                        <ul><li><strong>Fix allocation first:</strong> Public Services + Infrastructure + Debt Reduction must total <strong>100% or less</strong>. (Anything unallocated becomes surplus.)</li></ul>
+                        <div style="margin-top:10px;font-size:0.95em;color:#555;">Then the simulator can project outcomes.</div>
+                    `;
+                }
+
+                drawLafferChart();
+                return;
+            }
+
+            const allocSpending = rev.total * (totalAlloc / 100);
+            const interest = gameState.governmentDebt * DEBT_INTEREST_RATE;
+            const projectedNetRevenue = rev.total - allocSpending - BASE_GOVERNMENT_COST - interest;
+
+            if (typeof previewCache !== 'undefined') {
+                previewCache.netRevenue = projectedNetRevenue;
+            }
+
+            const eff = computeEffectivenessMultiplier(gameState.treasury);
+
+            const publicSpending = rev.total * (p.publicServices / 100);
+            const infrastructureSpending = rev.total * (p.infrastructure / 100);
+
+            const publicServiceEffect = (publicSpending / 100) * 0.8 * eff;
+            const infrastructureEffect = (infrastructureSpending / 100) * 0.6 * eff;
+
+            const naturalGrowth = 2.0;
+            const taxBurden = (p.taxRate1 * 0.012) + (p.taxRate2 * 0.010) + (p.taxRate3 * 0.008);
+            const spendingBoost = infrastructureEffect * 0.22 + publicServiceEffect * 0.15;
+            const projectedGDP = clamp((gameState.gdpGrowth * 0.85) + (naturalGrowth * 0.15) + spendingBoost - taxBurden - (capitalFlight * 0.1), -5, 8);
+
+            const redistributionEffect = (p.taxRate3 * 0.01) + (publicServiceEffect * 0.02);
+            const flightPenalty = capitalFlight * 0.008;
+            const projectedGini = clamp(gameState.gini - redistributionEffect + flightPenalty, 0.25, 0.55);
+
+            const jobCreation = infrastructureEffect * 0.14 + publicServiceEffect * 0.08;
+            const jobLoss = taxBurden * 0.3 + (projectedGDP < 0 ? Math.abs(projectedGDP) * 0.2 : 0);
+            const projectedUnemp = clamp(gameState.unemployment - jobCreation + jobLoss, 2, 15);
+
+            const targets = computeApprovalTargets(
+                { ...gameState, unemployment: projectedUnemp, capitalFlight },
+                p,
+                eff
+            );
+
+            const smooth = (cur, target) => clamp(cur + (target - cur) * 0.15, 0, 100);
+            const approvals = {
+                elite: smooth(gameState.approvals.elite, targets.elite),
+                business: smooth(gameState.approvals.business, targets.business),
+                middle: smooth(gameState.approvals.middle, targets.middle),
+                working: smooth(gameState.approvals.working, targets.working),
+                public: smooth(gameState.approvals.public, targets.public)
+            };
+
+            const overallApproval = (approvals.elite + approvals.business + approvals.middle + approvals.working + approvals.public) / 5;
+
+            document.getElementById('netRevenue').textContent = `${projectedNetRevenue.toFixed(1)}B`;
+            document.getElementById('gdpGrowth').textContent = `${projectedGDP.toFixed(1)}%`;
+            document.getElementById('gini').textContent = projectedGini.toFixed(2);
+            document.getElementById('unemployment').textContent = `${projectedUnemp.toFixed(1)}%`;
+            document.getElementById('approval').textContent = `${overallApproval.toFixed(0)}%`;
+
+            const overallApprovalSupport = document.getElementById('overallApprovalInSupport');
+            if (overallApprovalSupport) overallApprovalSupport.textContent = `${overallApproval.toFixed(0)}%`;
+
+            updateApprovalBar('eliteApproval', approvals.elite);
+            updateApprovalBar('businessApproval', approvals.business);
+            updateApprovalBar('middleApproval', approvals.middle);
+            updateApprovalBar('workingApproval', approvals.working);
+            updateApprovalBar('publicApproval', approvals.public);
+
+            setRiskIndicators(overallApproval, projectedGDP, gameState.governmentDebt, capitalFlight, taxEvasion);
+
+            if (hintsEnabled) {
+                renderHints(overallApproval, projectedGDP, projectedGini, projectedUnemp, p, taxEvasion, capitalFlight);
+            }
+
+            drawLafferChart();
+        }
+
+
+        let hintsEnabled = false;
+        function toggleHints() {
+            hintsEnabled = !hintsEnabled;
+            const panel = document.getElementById('hintPanel');
+            const btn = document.getElementById('hintToggle');
+            if (hintsEnabled) {
+                btn.textContent = '💡 Hints: ON';
+                panel.style.display = 'block';
+                updatePolicyPreview();
+            } else {
+                btn.textContent = '💡 Hints: OFF';
+                panel.style.display = 'none';
+            }
+        }
+
+        function renderHints(overallApproval, projectedGDP, projectedGini, projectedUnemp, p, taxEvasion, capitalFlight) {
+            const panel = document.getElementById('hintPanel');
+
+            const hints = [];
+
+            // Approval levers
+            if (overallApproval < 50) {
+                hints.push('Try increasing **Public Services** a bit (helps Working + Public Sector approval).');
+                if (p.taxRate1 > 18) hints.push('Consider lowering **Capital Gains Tax (Bottom 60%)** slightly — it can boost Middle/Working approval.');
+            }
+
+            // GDP levers
+            if (projectedGDP < 2) {
+                hints.push('Increase **Infrastructure** a little — it tends to improve GDP growth over time.');
+                if (p.taxRate2 > 35) hints.push('Lower **Business Tax** slightly — high business tax can slow growth.');
+            }
+
+            // Flight/evasion levers
+            if (capitalFlight > 3) {
+                hints.push('Your **Wealth Tax** is creating higher flight pressure. Try lowering it a bit or raising **Tax Enforcement** to reduce avoidance.');
+            } else if (taxEvasion > 30) {
+                hints.push('Raise **Tax Enforcement** to reduce tax evasion (more revenue without raising tax rates).');
+            }
+
+            // Unemployment
+            if (projectedUnemp > 8) {
+                hints.push('If unemployment is high, **Infrastructure** and **Public Services** spending usually help create jobs.');
+            }
+
+            // Inequality trade-off
+            if (projectedGini > 0.45 && p.publicServices < 35) {
+                hints.push('If inequality is high, increasing **Public Services** (and/or a modest Wealth Tax) can bring Gini down — but watch flight risk.');
+            }
+
+            // Keep concise
+            const limited = hints.slice(0, 6);
+
+            panel.innerHTML = `
+                <h4>💡 Live Policy Hints</h4>
+                <div><strong>Goal:</strong> higher Overall Approval + stronger GDP Growth.</div>
+                <ul>${limited.map(h => `<li>${h}</li>`).join('')}</ul>
+                <div style="margin-top:10px;font-size:0.95em;color:#555;">
+                    These hints update as you move the sliders.
+                </div>
+            `;
+        }
+
+
+        // Controls
+        const controls = {
+            taxRate1: { slider: document.getElementById('taxRate1'), display: document.getElementById('taxRate1Value') },
+            taxRate2: { slider: document.getElementById('taxRate2'), display: document.getElementById('taxRate2Value') },
+            taxRate3: { slider: document.getElementById('taxRate3'), display: document.getElementById('taxRate3Value') },
+            enforcement: { slider: document.getElementById('enforcement'), display: document.getElementById('enforcementValue') },
+            publicServices: { slider: document.getElementById('publicServices'), display: document.getElementById('publicServicesValue') },
+            infrastructure: { slider: document.getElementById('infrastructure'), display: document.getElementById('infrastructureValue') },
+            debtReduction: { slider: document.getElementById('debtReduction'), display: document.getElementById('debtReductionValue') }
+        };
+
+        // Update slider displays
+        Object.keys(controls).forEach(key => {
+            controls[key].slider.addEventListener('input', () => {
+                let value = controls[key].slider.value;
+                if (key === 'taxRate3') {
+                    controls[key].display.textContent = value + '%';
+                } else {
+                    controls[key].display.textContent = value + '%';
+                }
+                updateAllocationTotal();
+                updatePolicyPreview(); // Live preview
+            });
+        });
+
+        
+        function updateAllocationTotal() {
+            const total = parseFloat(controls.publicServices.slider.value) +
+                         parseFloat(controls.infrastructure.slider.value) +
+                         parseFloat(controls.debtReduction.slider.value);
+            document.getElementById('totalAllocation').textContent = total.toFixed(0) + '%';
+
+            const totalElement = document.getElementById('totalAllocation');
+            const isValid = (total <= 100.1);
+            totalElement.style.color = isValid ? '#28a745' : '#dc3545';
+
+            const budgetEl = document.getElementById('budgetBalance');
+            if (!isValid) {
+                budgetEl.textContent = '—';
+                budgetEl.style.color = '#dc3545';
+                return;
+            }
+
+            const taxRevenue = (previewCache && typeof previewCache.taxRevenue === "number") ? previewCache.taxRevenue : gameState.taxRevenue;
+            const allocSpending = taxRevenue * (total / 100);
+            const interest = gameState.governmentDebt * DEBT_INTEREST_RATE;
+            const previewBalance = taxRevenue - allocSpending - BASE_GOVERNMENT_COST - interest;
+
+            budgetEl.textContent = `${previewBalance >= 0 ? '+' : ''}${previewBalance.toFixed(1)}B`;
+            budgetEl.style.color = previewBalance >= 0 ? '#28a745' : '#dc3545';
+        }
+
+
+        function addEvent(message) {
+            const eventLog = document.getElementById('eventLog');
+            const eventDiv = document.createElement('div');
+            eventDiv.className = 'event';
+            eventDiv.textContent = `Turn ${gameState.turn}: ${message}`;
+            eventLog.insertBefore(eventDiv, eventLog.firstChild);
+            
+            // Keep only last 10 events
+            while (eventLog.children.length > 10) {
+                eventLog.removeChild(eventLog.lastChild);
+            }
+        }
+
+        function updateApprovalBar(elementId, value) {
+            const bar = document.getElementById(elementId);
+            bar.style.width = value + '%';
+            document.getElementById(elementId + 'Text').textContent = value.toFixed(0) + '%';
+        }
+
+        function updateUI() {
+            const months = ["January", "February", "March", "April", "May", "June", 
+                          "July", "August", "September", "October", "November", "December"];
+            document.getElementById('currentDate').textContent = 
+                `${months[gameState.date.getMonth()]} ${gameState.date.getFullYear()}`;
+            
+            document.getElementById('population').textContent = `${gameState.population.toFixed(1)}M`;
+            document.getElementById('treasury').textContent = `${gameState.treasury.toFixed(1)}B`;
+            document.getElementById('taxRevenue').textContent = `${gameState.taxRevenue.toFixed(1)}B`;
+            document.getElementById('govDebt').textContent = `${gameState.governmentDebt.toFixed(1)}B`;
+            document.getElementById('netRevenue').textContent = `${gameState.netRevenue.toFixed(1)}B`;
+            document.getElementById('gdpGrowth').textContent = `${gameState.gdpGrowth.toFixed(1)}%`;
+            document.getElementById('gini').textContent = gameState.gini.toFixed(2);
+            document.getElementById('unemployment').textContent = `${gameState.unemployment.toFixed(1)}%`;
+            
+            const overallApproval = (gameState.approvals.elite + gameState.approvals.business + 
+                                    gameState.approvals.middle + gameState.approvals.working + 
+                                    gameState.approvals.public) / 5;
+            document.getElementById('approval').textContent = `${overallApproval.toFixed(0)}%`;
+
+            // Political Support tab indicators
+            const overallApprovalSupport = document.getElementById('overallApprovalInSupport');
+            if (overallApprovalSupport) overallApprovalSupport.textContent = `${overallApproval.toFixed(0)}%`;
+
+            // Flight risk indicator (based on capital flight pressure and evasion)
+            const flightRiskIndicator = document.getElementById('flightRiskIndicator');
+            const flightRiskLevel = document.getElementById('flightRiskLevel');
+            if (flightRiskIndicator && flightRiskLevel) {
+                const pressure = gameState.capitalFlight + (gameState.taxEvasion / 20);
+                if (pressure > 6) {
+                    flightRiskIndicator.className = 'risk-indicator high-risk';
+                    flightRiskLevel.textContent = `HIGH (${gameState.capitalFlight.toFixed(1)}% capital flight)`;
+                } else if (pressure > 3) {
+                    flightRiskIndicator.className = 'risk-indicator medium-risk';
+                    flightRiskLevel.textContent = `MEDIUM (${gameState.capitalFlight.toFixed(1)}% capital flight)`;
+                } else {
+                    flightRiskIndicator.className = 'risk-indicator low-risk';
+                    flightRiskLevel.textContent = `LOW (${gameState.capitalFlight.toFixed(1)}% capital flight)`;
+                }
+            }
+
+            // Overall approval indicator styling
+            const overallApprovalIndicator = document.getElementById('overallApprovalIndicator');
+            if (overallApprovalIndicator) {
+                if (overallApproval < 35) overallApprovalIndicator.className = 'risk-indicator high-risk';
+                else if (overallApproval < 50) overallApprovalIndicator.className = 'risk-indicator medium-risk';
+                else overallApprovalIndicator.className = 'risk-indicator low-risk';
+            }
+
+            document.getElementById('popYouth').textContent = `${gameState.demographics.youth.toFixed(1)}M`;
+            document.getElementById('popWorking').textContent = `${gameState.demographics.working.toFixed(1)}M`;
+            document.getElementById('popSenior').textContent = `${gameState.demographics.senior.toFixed(1)}M`;
+            document.getElementById('migrationRate').textContent = 
+                `${gameState.migrationRate > 0 ? '+' : ''}${gameState.migrationRate.toFixed(1)}%`;
+
+            updateApprovalBar('eliteApproval', gameState.approvals.elite);
+            updateApprovalBar('businessApproval', gameState.approvals.business);
+            updateApprovalBar('middleApproval', gameState.approvals.middle);
+            updateApprovalBar('workingApproval', gameState.approvals.working);
+            updateApprovalBar('publicApproval', gameState.approvals.public);
+
+            // Risk indicator
+            const riskIndicator = document.getElementById('riskIndicator');
+            const riskLevel = document.getElementById('riskLevel');
+            
+            if (overallApproval < 35 || gameState.gdpGrowth < 0 || gameState.governmentDebt > 1500) {
+                riskIndicator.className = 'risk-indicator high-risk';
+                riskLevel.textContent = 'HIGH';
+            } else if (overallApproval < 50 || gameState.gdpGrowth < 1 || gameState.governmentDebt > 1200) {
+                riskIndicator.className = 'risk-indicator medium-risk';
+                riskLevel.textContent = 'MEDIUM';
+            } else {
+                riskIndicator.className = 'risk-indicator low-risk';
+                riskLevel.textContent = 'LOW';
+            }
+
+            document.getElementById('turn').textContent = gameState.turn;
+        }
+
+        function updateApprovals(effectivenessMultiplier = 1.0) {
+            const taxRate1 = parseFloat(controls.taxRate1.slider.value);
+            const taxRate2 = parseFloat(controls.taxRate2.slider.value);
+            const taxRate3 = parseFloat(controls.taxRate3.slider.value);
+            const publicServices = parseFloat(controls.publicServices.slider.value);
+            const infrastructure = parseFloat(controls.infrastructure.slider.value);
+
+            // Much smaller random fluctuation
+                        // Treasury crisis impacts approvals when reserves are low (treasury never goes negative; deficit becomes debt)
+            const treasuryCrisisPenalty = gameState.treasury < 50 ? (50 - gameState.treasury) / 2 : 0;
+            const effectivePublicServices = publicServices * effectivenessMultiplier;
+            const effectiveInfrastructure = infrastructure * effectivenessMultiplier;
+
+            // Calculate target approvals
+            const eliteTarget = 78 - (taxRate1 * 1.2) - (taxRate2 * 0.8) - (taxRate3 * 1.1) - (gameState.capitalFlight * 2.2) - treasuryCrisisPenalty;
+            const businessTarget = 72 - (taxRate1 * 1.0) - (taxRate2 * 0.9) - (taxRate3 * 0.7) - (gameState.capitalFlight * 1.0) + (effectiveInfrastructure * 0.35) - treasuryCrisisPenalty;
+            const middleTarget = 64 - (taxRate1 * 0.6) + (effectivePublicServices * 0.45) + (effectiveInfrastructure * 0.25) + (gameState.gdpGrowth * 2.0) - (gameState.unemployment * 1.2);
+            const workingTarget = 60 - (taxRate1 * 0.3) + (effectivePublicServices * 0.55) + (gameState.gdpGrowth * 1.0) - (gameState.unemployment * 2.0);
+            const publicTarget = 66 + (effectivePublicServices * 0.35) + (effectiveInfrastructure * 0.22) - (taxRate1 * 0.4) - treasuryCrisisPenalty;
+
+            // Smooth changes toward targets
+            const smoothChange = (current, target) => {
+                const change = (target - current) * 0.15; // 15% movement toward target
+                return Math.max(0, Math.min(100, current + change));
+            };
+
+            gameState.approvals.elite = smoothChange(gameState.approvals.elite, eliteTarget);
+            gameState.approvals.business = smoothChange(gameState.approvals.business, businessTarget);
+            gameState.approvals.middle = smoothChange(gameState.approvals.middle, middleTarget);
+            gameState.approvals.working = smoothChange(gameState.approvals.working, workingTarget);
+            gameState.approvals.public = smoothChange(gameState.approvals.public, publicTarget);
+        }
+
+        function generateEvents() {
+            const eventPool = [];
+
+            // Treasury-related events (highest priority)
+            if (gameState.treasury === 0) {
+                eventPool.push("🚨 CRISIS: Treasury depleted! Operating on deficit spending.");
+            } else if (gameState.treasury < 25) {
+                eventPool.push("⚠️ Treasury critically low. Emergency measures discussed in parliament.");
+            } else if (gameState.treasury < 75 && Math.random() > 0.5) {
+                eventPool.push("⚠️ Treasury reserves running low; agencies delay nonessential spending.");
+            }
+
+            // Budget balance events
+            if (gameState.lastSpending && gameState.lastSpending.balance < -20) {
+                eventPool.push(`💸 Massive budget deficit of ${Math.abs(gameState.lastSpending.balance).toFixed(1)}B this period!`);
+            } else if (gameState.lastSpending && gameState.lastSpending.balance > 30) {
+                eventPool.push(`💰 Budget surplus of ${gameState.lastSpending.balance.toFixed(1)}B enables new initiatives!`);
+            }
+
+            if (gameState.taxRevenue > 100) {
+                eventPool.push("💰 Record tax revenue enables major infrastructure investments!");
+            }
+
+            if (gameState.taxEvasion > 35) {
+                eventPool.push("🕵️ High tax evasion detected! Underground economy growing rapidly.");
+            }
+
+            if (gameState.capitalFlight > 5) {
+                eventPool.push("✈️ Capital flight accelerating! Wealthy citizens moving assets overseas.");
+            }
+
+            if (gameState.gini < 0.38 && Math.random() > 0.7) {
+                eventPool.push("🎉 Social cohesion improving as inequality falls! Crime rates decline.");
+            }
+
+            if (gameState.unemployment > 10) {
+                eventPool.push("📉 High unemployment sparks protests and calls for job programs!");
+            }
+
+            if (gameState.gdpGrowth < 0) {
+                eventPool.push("📉 Economic contraction concerns investors and citizens alike.");
+            }
+
+            if (gameState.governmentDebt > 1500) {
+                eventPool.push("💳 Debt levels worry international markets; borrowing costs rising.");
+            }
+
+            // Demographic events
+            if (gameState.demographics.senior > 20) {
+                eventPool.push("👴 Aging population strains pension and healthcare systems.");
+            }
+
+            if (gameState.migrationRate > 1.5) {
+                eventPool.push("🌍 High immigration boosts workforce but strains housing and services.");
+            } else if (gameState.migrationRate < -0.5) {
+                eventPool.push("🚪 Net emigration reduces workforce, hurting long-term growth prospects.");
+            }
+
+            // Choose up to 2 random events
+            if (eventPool.length > 0) {
+                const numEvents = Math.min(2, eventPool.length);
+                for (let i = 0; i < numEvents; i++) {
+                    const randomIndex = Math.floor(Math.random() * eventPool.length);
+                    addEvent(eventPool[randomIndex]);
+                    eventPool.splice(randomIndex, 1);
+                }
+            }
+        }
+
+        
+        function simulateTurn() {
+            const ps = parseFloat(controls.publicServices.slider.value);
+            const inf = parseFloat(controls.infrastructure.slider.value);
+            const debtAlloc = parseFloat(controls.debtReduction.slider.value);
+
+            const total = ps + inf + debtAlloc;
+            // Option A: allow allocation to be <= 100%. Any unallocated share becomes surplus.
+            if (total > 100.1) {
+                alert('Revenue allocation cannot exceed 100%. Current total: ' + total.toFixed(0) + '%');
+                return;
+            }
+
+            gameState.turn++;
+            gameState.date.setMonth(gameState.date.getMonth() + 6);
+
+            const p = getPoliciesFromSliders();
+            const { taxEvasion, capitalFlight } = computeEvasionAndFlight(p);
+            gameState.taxEvasion = taxEvasion;
+            gameState.capitalFlight = capitalFlight;
+
+            const rev = computeTaxRevenue(p, taxEvasion, capitalFlight);
+            gameState.taxRevenue = rev.total;
+            gameState.revenueByClass = { ...rev.byClass };
+
+            const publicSpending = gameState.taxRevenue * (p.publicServices / 100);
+            const infrastructureSpending = gameState.taxRevenue * (p.infrastructure / 100);
+            const debtPayment = gameState.taxRevenue * (p.debtReduction / 100);
+
+            const effectivenessMultiplier = computeEffectivenessMultiplier(gameState.treasury);
+
+            const publicServiceEffect = (publicSpending / 100) * 0.8 * effectivenessMultiplier;
+            const infrastructureEffect = (infrastructureSpending / 100) * 0.6 * effectivenessMultiplier;
+
+            const redistributionEffect = (p.taxRate3 * 0.01) + (publicServiceEffect * 0.02);
+            const flightPenalty = gameState.capitalFlight * 0.008;
+            gameState.gini = clamp(gameState.gini - redistributionEffect + flightPenalty, 0.25, 0.55);
+
+            const naturalGrowth = 2.0;
+            const taxBurden = (p.taxRate1 * 0.012) + (p.taxRate2 * 0.010) + (p.taxRate3 * 0.008);
+            const spendingBoost = infrastructureEffect * 0.22 + publicServiceEffect * 0.15;
+            gameState.gdpGrowth = clamp((gameState.gdpGrowth * 0.85) + (naturalGrowth * 0.15) + spendingBoost - taxBurden - (gameState.capitalFlight * 0.1), -5, 8);
+
+            const jobCreation = infrastructureEffect * 0.14 + publicServiceEffect * 0.08;
+            const jobLoss = taxBurden * 0.3 + (gameState.gdpGrowth < 0 ? Math.abs(gameState.gdpGrowth) * 0.2 : 0);
+            gameState.unemployment = clamp(gameState.unemployment - jobCreation + jobLoss, 2, 15);
+
+            gameState.migrationRate = clamp((gameState.gdpGrowth - 1) * 0.3 - (gameState.unemployment - 5) * 0.1, -2, 3);
+            gameState.population = Math.max(80, gameState.population * (1 + gameState.migrationRate/100));
+
+            let seniorShare = clamp(0.15 + (gameState.turn * 0.001), 0.12, 0.22);
+            let youthShare = clamp(0.30 - (gameState.turn * 0.001), 0.22, 0.30);
+            let workingShare = clamp(1 - seniorShare - youthShare, 0.50, 0.65);
+
+            const shareSum = seniorShare + youthShare + workingShare;
+            seniorShare /= shareSum;
+            youthShare /= shareSum;
+            workingShare /= shareSum;
+
+            gameState.demographics.youth = gameState.population * youthShare;
+            gameState.demographics.working = gameState.population * workingShare;
+            gameState.demographics.senior = gameState.population * seniorShare;
+
+            const startingDebt = gameState.governmentDebt;
+            const debtInterest = startingDebt * DEBT_INTEREST_RATE;
+
+            const principalReduction = Math.min(debtPayment, startingDebt);
+            gameState.governmentDebt = Math.max(0, startingDebt - principalReduction);
+
+            const governmentExpenses = publicSpending + infrastructureSpending + debtPayment + BASE_GOVERNMENT_COST + debtInterest;
+            gameState.netRevenue = gameState.taxRevenue - governmentExpenses;
+            gameState.treasury += gameState.netRevenue;
+
+            gameState.lastSpending = {
+                balance: gameState.netRevenue,
+                public: publicSpending,
+                infrastructure: infrastructureSpending,
+                debt: debtPayment,
+                base: BASE_GOVERNMENT_COST,
+                interest: debtInterest
+            };
+
+            if (gameState.treasury < 0) {
+                const deficit = Math.abs(gameState.treasury);
+                gameState.governmentDebt += deficit;
+                gameState.treasury = 0;
+                addEvent(`💸 Deficit of ${deficit.toFixed(1)}B financed via new borrowing (added to debt).`);
+            }
+
+            const budgetBalance = gameState.netRevenue;
+            if (budgetBalance < -50) {
+                addEvent("⚠️ Major budget deficit! Opposition calling for fiscal responsibility.");
+            } else if (budgetBalance > 50 && gameState.treasury > 1000) {
+                addEvent("💰 Strong fiscal position! Budget surplus and healthy treasury reserves.");
+            }
+
+            if (debtInterest > 20) {
+                addEvent(`💳 Government paid ${debtInterest.toFixed(1)}B in debt interest this period.`);
+            }
+
+            updateApprovals(effectivenessMultiplier);
+            generateEvents();
+
+            const overallApproval = (gameState.approvals.elite + gameState.approvals.business +
+                                    gameState.approvals.middle + gameState.approvals.working +
+                                    gameState.approvals.public) / 5;
+
+            gameState.history.turns.push(gameState.turn);
+            gameState.history.gini.push(gameState.gini);
+            gameState.history.approval.push(overallApproval);
+            gameState.history.gdp.push(gameState.gdpGrowth);
+            gameState.history.debt.push(gameState.governmentDebt);
+
+            updateUI();
+            updatePolicyPreview();
+            updateAllocationTotal();
+            drawMetricsChart();
+        }
+
+
+        function resetGame() {
+            gameState = {
+                turn: 1,
+                date: new Date(2025, 0, 1),
+                population: 100,
+                treasury: 500,
+                taxRevenue: 80,
+                netRevenue: 0,
+                gdpGrowth: 2.5,
+                gini: 0.45,
+                unemployment: 6.0,
+                governmentDebt: 1000,
+                approvals: {
+                    elite: 45,
+                    business: 50,
+                    middle: 55,
+                    working: 65,
+                    public: 60
+                },
+                demographics: {
+                    youth: 30,
+                    working: 55,
+                    senior: 15
+                },
+                migrationRate: 0.5,
+                taxEvasion: 15,
+                capitalFlight: 0,
+                lastSpending: null,
+                history: {
+                    turns: [],
+                    gini: [],
+                    approval: [],
+                    gdp: [],
+                    debt: []
+                },
+                revenueByClass: {
+                    elite: 0,
+                    business: 0,
+                    middle: 0,
+                    working: 0
+                }
+            };
+
+            document.getElementById('eventLog').innerHTML = '<div class="event">Welcome back to Democria! Your first policy decisions await...</div>';
+            document.querySelector('.next-turn').disabled = false;
+            
+            // Reset sliders to default
+            controls.taxRate1.slider.value = 15;
+            controls.taxRate2.slider.value = 25;
+            controls.taxRate3.slider.value = 2;
+            controls.enforcement.slider.value = 50;
+            controls.publicServices.slider.value = 40;
+            controls.infrastructure.slider.value = 30;
+            controls.debtReduction.slider.value = 30;
+            
+            // Update displays
+            Object.keys(controls).forEach(key => {
+                controls[key].display.textContent = controls[key].slider.value + '%';
+            });
+            
+            updateAllocationTotal();
+            updateUI();
+            drawMetricsChart();
+            drawLafferChart();
+            previewCache.taxRevenue = gameState.taxRevenue;
+            previewCache.netRevenue = gameState.netRevenue;
+            updatePolicyPreview();
+        }
+
+        // Initialize game
+        window.addEventListener('load', () => {
+            initializeCharts();
+            updateUI();
+            updateAllocationTotal();
+
+            // Initialize live preview values
+            previewCache.taxRevenue = gameState.taxRevenue;
+            previewCache.netRevenue = gameState.netRevenue;
+            updatePolicyPreview();
+            
+            // Initialize chart history with starting values
+            const overallApproval = (gameState.approvals.elite + gameState.approvals.business + 
+                                    gameState.approvals.middle + gameState.approvals.working + 
+                                    gameState.approvals.public) / 5;
+            
+            gameState.history.turns.push(1);
+            gameState.history.gini.push(gameState.gini);
+            gameState.history.approval.push(overallApproval);
+            gameState.history.gdp.push(gameState.gdpGrowth);
+            gameState.history.debt.push(gameState.governmentDebt);
+            
+            drawMetricsChart();
+            drawLafferChart();
+
+        });
+
+        window.addEventListener('resize', () => {
+            if (metricsChart && lafferChart) {
+                metricsChart.width = document.getElementById('metricsChart').width = document.getElementById('metricsChart').offsetWidth;
+                lafferChart.width = document.getElementById('lafferChart').width = document.getElementById('lafferChart').offsetWidth;
+                drawMetricsChart();
+                drawLafferChart();
+            }
+        });
+    </script>
+</body>
+</html>
