@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        /* This sets the default look of the map */
+        path { fill: #88A4BC; stroke: #ffffff; stroke-width: 1; transition: 0.3s; cursor: pointer; }
+        path:hover { fill: #3B729F; }
+        
+        /* This is the red highlight color from your original image */
+        .highlighted { fill: #FF4D4D !important; }
+
+        svg { width: 100%; height: auto; }
+    </style>
+</head>
+<body>
+
+    <div id="map-container">
+        </div>
+
+    <script>
+        // This script makes every country (path) clickable
+        document.querySelectorAll('path').forEach(country => {
+            country.addEventListener('click', function() {
+                this.classList.toggle('highlighted');
+            });
+        });
+    </script>
+</body>
+</html>
